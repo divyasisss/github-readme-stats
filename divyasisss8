@@ -1,0 +1,49 @@
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+public class GitHubStatsGenerator {
+    public static void main(String[] args) {
+        String username = "your-github-username"; // Replace with your GitHub username
+        String apiUrl = "https://api.github.com/users/" + username;
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                String responseBody = response.body();
+
+                // Parse the JSON response to extract relevant data (e.g., public_repos, followers, etc.)
+                // You can use a JSON parsing library like Jackson or Gson for this.
+                // Example: int publicRepos = parseReposCount(responseBody);
+
+                // Generate the statistics section for your README
+                String readmeStats = generateReadmeStats(username, /* Add your parsed data here */);
+                System.out.println(readmeStats); // For testing, you can print it to the console
+
+                // You can save the `readmeStats` to your README.md file here.
+            } else {
+                System.err.println("Failed to fetch GitHub data. Status code: " + response.statusCode());
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Implement a method to parse JSON data here (using Gson or Jackson)
+
+    public static String generateReadmeStats(String username, /* Add your data here */) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("## GitHub Stats for ").append(username).append("\n\n");
+        // Append statistics like total repositories, stars, contributions, etc.
+        // Example: sb.append("Total Repositories: ").append(publicRepos).append("\n");
+        return sb.toString();
+    }
+}
